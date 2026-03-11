@@ -93,7 +93,7 @@ pipeline {
                         error('AWS_ACCOUNT_ID must be configured for the ECR push stage.')
                     }
 
-                    withAWS(credentials: 'aws-credentials', region: AWS_REGION) {
+                    withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-credentials', accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
                         runCommand(
                             """
                             aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ECR_REGISTRY}
@@ -119,7 +119,7 @@ pipeline {
             steps {
                 script {
                     def instanceId = 'i-06615ef413f858701'
-                    withAWS(credentials: 'aws-credentials', region: AWS_REGION) {
+                    withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-credentials', accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
                         runCommand(
                             """
                             aws ssm send-command \\
