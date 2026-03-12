@@ -1,0 +1,8 @@
+{
+  "Parameters": {
+    "commands": [
+       "docker ps -a",
+       "docker logs frontend"
+    ]
+  }
+}
