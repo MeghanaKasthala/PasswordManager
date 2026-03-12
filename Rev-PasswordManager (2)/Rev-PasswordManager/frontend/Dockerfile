@@ -30,15 +30,19 @@ COPY --from=builder /app/dist/frontend/browser /usr/share/nginx/html
 RUN chown -R nginx:nginx /usr/share/nginx/html && \
   chmod -R 755 /usr/share/nginx/html
 
-# Install wget for health check
-RUN apk add --no-cache wget
+# Install wget for health check and certbot for HTTPS
+RUN apk add --no-cache wget certbot certbot-nginx
 
-# Expose port
-EXPOSE 80
+# Copy and setup start script
+COPY start.sh /start.sh
+RUN chmod +x /start.sh
+
+# Expose HTTP and HTTPS ports
+EXPOSE 80 443
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
   CMD wget --no-verbose --tries=1 --spider http://localhost:80/healthz || exit 1
 
-# Start nginx
-CMD ["nginx", "-g", "daemon off;"]
+# Start script
+CMD ["/start.sh"]
